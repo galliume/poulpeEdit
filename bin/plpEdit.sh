@@ -1,0 +1,1 @@
+clang -o ./build/poulpeEdit ./src/main.c
