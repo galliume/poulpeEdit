@@ -12,7 +12,6 @@ project(PoulpeEdit
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 include(gitSubModule)
@@ -115,4 +114,10 @@ if(MSVC)
     ${PROJECT_SOURCE_DIR}/vendor/gtk/lib/sass.lib)
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${GTK_LIBS})
+
+    list(APPEND WIN_LIBS
+      Ws2_32
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${WIN_LIBS})
+
 endif()

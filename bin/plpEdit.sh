@@ -42,7 +42,10 @@ done
 if [[ configPoulpeEdit -eq 1 ]]
 then
     rm ./build -rf
-    cmake -B ./build/
+    cmake -B ./build \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_GENERATOR_TOOLSET="ClangCL"
 fi
 
 if [[ buildPoulpeEdit -eq 1 ]]
