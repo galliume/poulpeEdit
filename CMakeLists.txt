@@ -12,7 +12,6 @@ project(PoulpeEdit
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 include(gitSubModule)
@@ -21,8 +20,13 @@ add_executable(${PROJECT_NAME} src/main.c)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/core)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/platform)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/network)
+  
 if(MSVC)
-  set(DEBUG_OPTIONS "/WX;/MDd;/MDd;/std:c17;")
+  set(DEBUG_OPTIONS "/WX;/MDd;/std:c17;")
   set(RELEASE_OPTIONS "-O2;/Obd2;/Ot;/MD;/fp:fast")
 else()
   set(DEBUG_OPTIONS "-Wextra;-Wall;-Werror;-Wshadow;-Wfloat-equal;-Wundef;-Wpointer-arith;-Wcast-align;-Wstrict-prototypes;-Wstrict-overflow=1;-Wwrite-strings;-Waggregate-return;-Wcast-qual;-Wswitch-default;-Wswitch-enum;-Wconversion;-Wunreachable-code")
@@ -115,4 +119,24 @@ if(MSVC)
     ${PROJECT_SOURCE_DIR}/vendor/gtk/lib/sass.lib)
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${GTK_LIBS})
+
+    list(APPEND WIN_LIBS
+      Ws2_32
+      Kernel32
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${WIN_LIBS})
+
+	#Filters for visual studio structure
+	file(GLOB_RECURSE _source_list "${PROJECT_SOURCE_DIR}/src/**/*.c" "${PROJECT_SOURCE_DIR}/src/**/*.h")
+	file(GLOB_RECURSE _source_list "${PROJECT_SOURCE_DIR}/src/*.c" "${PROJECT_SOURCE_DIR}/src/*.h")
+	foreach(_source IN ITEMS ${_source_list})
+		get_filename_component(_source_path "${_source}" PATH)
+		string(REPLACE "${CMAKE_SOURCE_DIR}" "" _group_path "${_source_path}")
+		string(REPLACE "/" "\\" _group_path "${_group_path}")
+		source_group("${_group_path}" FILES "${_source}")
+	  list(APPEND TIDY_SRC "${_source}")
+	endforeach()
+
+	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
