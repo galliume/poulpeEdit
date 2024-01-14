@@ -6,9 +6,11 @@
 
 typedef struct platformState {
   void* state;
+  GtkApplication* app;
+  i32 status;
 } platformState;
 
-b8 platformStartup(
+void platformStartup(
   platformState* platformState,
   char const * name,
   i32 x,
@@ -30,6 +32,5 @@ f64 platformGetAbosluteTime();
 //GTK callbacks
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
-static void quitApp(GtkWidget* widget, gpointer data);
 static void activate(GtkApplication* app, gpointer user_data);
 #pragma clang diagnostic pop

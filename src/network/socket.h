@@ -2,10 +2,10 @@
 
 #include "defines.h"
 
-typedef struct platform_socket {
-  void* pimpl;
-} platform_socket;
+typedef struct platformSocket {
+  void* state;
+} platformSocket;
 
-i32 socketCreate(void);
-char* socketReceive(void);
-void socketClose(void);
+i32 socketCreate(platformSocket* platformSocket);
+char* socketReceive(platformSocket* platformSocket);
+void socketClose(platformSocket* platformSocket);

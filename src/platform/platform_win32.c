@@ -5,16 +5,16 @@
 #if PLPPLATFORM_WINDOWS
 
 typedef struct internalState {
-  GtkApplication* app;
-  i32 status;
+
 } state;
 
 static f64 clockFrequency;
 static LARGE_INTEGER startTime;
 
-//LRESULT CALLBACK win32ProcessMessage(HWND hwnd, u32 msg, WPARAM wParam, LPARAM lParam);
+GtkTextBuffer *socketStatusBuffer;
 
-b8 platformStartup(
+//LRESULT CALLBACK win32ProcessMessage(HWND hwnd, u32 msg, WPARAM wParam, LPARAM lParam);
+void platformStartup(
   platformState* platformState,
   char const* name,
   i32 x,
@@ -23,33 +23,26 @@ b8 platformStartup(
   i32 heihgt
 )
 {
-  platformState->state = malloc(sizeof(struct internalState));
-  struct internalState* state = (struct internalState*)platformState->state;
+  //platformState->state = platformAllocate(sizeof(struct internalState));
+  //struct internalState* state = (struct internalState*)platformState->state;
 
-  state->app = gtk_application_new("org.galliume", G_APPLICATION_DEFAULT_FLAGS);
-  state->status = g_application_run(G_APPLICATION(state->app), 0, NULL);
+  socketStatusBuffer = gtk_text_buffer_new(NULL);
 
-  platformState->state = state;
-  
+  platformState->app = gtk_application_new("org.galliume", G_APPLICATION_DEFAULT_FLAGS);
+
+  g_signal_connect(platformState->app, "activate", G_CALLBACK(activate), platformState);
+
   LARGE_INTEGER frequency;
   QueryPerformanceCounter(&startTime);
   clockFrequency = 1.0 / (f64)frequency.QuadPart;
   QueryPerformanceCounter(&startTime);
-
-  g_signal_connect(state->app, "activate", G_CALLBACK(activate), NULL);
-  g_signal_connect(state->app, "destroy", G_CALLBACK(quitApp), &state);
-
-  return TRUE;
 }
 
 void platformShutdown(platformState* platformState)
 {
-  struct internalState* state = (struct internalState*) platformState->state;
-
-  if (state->app)
+  if (platformState->app)
   {
-    g_object_unref(state->app);
-    state->app = 0;
+    g_object_unref(platformState->app);
   }
 }
 
@@ -76,7 +69,7 @@ void *platformCopyMemory(void* dest, void const* source, u64 size)
 
 void *platformSetMemory(void* dest, i32 value, u64 size)
 {
-  return memset(dest, 0, size);
+  return memset(dest, value, size);
 }
 
 void platformConsoleWrite(char const* message, u8 color)
@@ -131,14 +124,8 @@ f64 platformGetAbosluteTime()
 //  return DefWindowProcA(hwnd, msg, wParam, lParam);
 //}
 
-static void quitApp(GtkWidget *widget, gpointer data)
-{
-  struct platformState* platformState = (struct platformState*)data;
-  platformShutdown(platformState);
-}
-
 static void
-activate(GtkApplication* app, gpointer user_data)
+activate(GtkApplication* app, gpointer data)
 {
   GtkWidget *window;
 
@@ -148,12 +135,9 @@ activate(GtkApplication* app, gpointer user_data)
   gtk_window_present(GTK_WINDOW(window));
 
   GtkWidget *view;
-  GtkTextBuffer *buffer;
-  char *text = user_data;
-
   view = gtk_text_view_new();
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW (view));
-  gtk_text_buffer_set_text(buffer, text, -1);
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(view), socketStatusBuffer);
+  gtk_widget_set_name(view, "socket_status");
 
   gtk_window_set_child(GTK_WINDOW(window), view);
 }
