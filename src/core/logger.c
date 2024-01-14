@@ -5,6 +5,8 @@
 
 #include "logger.h"
 
+#include "platform/platform.h"
+
 b8 initialize_logging()
 {
   //@todo create log file
@@ -20,21 +22,24 @@ void logOutput(enum logLevel level, char const* message, ...)
 {
   const char* levelString[6] = { "[FATAL]:", "[ERROR]:", "[WARN]:", "[INFO]:", "[DEBUG]:", "[TRACE]:" };
 
-  //b8 isError = level < 2;
+  b8 isError = level < LOG_LEVEL_WARN;
 
   //@todo tmp
-  char msg[32000];
+  const i32 msgLength = 32000;
+  char msg[msgLength];
   memset(msg, 0, sizeof(msg));
 
   __builtin_va_list argptr;
   va_start(argptr, message);
-  vsnprintf(msg, 32000, message, argptr);
+  vsnprintf(msg, msgLength, message, argptr);
   va_end(argptr);
 
-  char output[32000];
+  char output[msgLength];
   sprintf(output, "%s%s\n", levelString[level], msg);
 
-  //@todo platform specific output
-  //add date
-  printf("%s", output);
+  if (isError) {
+    platformConsoleWriteError(output, level);
+  } else {
+    platformConsoleWrite(output, level);
+  }
 }

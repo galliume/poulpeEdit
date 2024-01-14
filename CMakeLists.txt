@@ -22,6 +22,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/core)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/platform)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/network)
   
 if(MSVC)
@@ -121,6 +122,7 @@ if(MSVC)
 
     list(APPEND WIN_LIBS
       Ws2_32
+      Kernel32
     )
     target_link_libraries(${PROJECT_NAME} PRIVATE ${WIN_LIBS})
 

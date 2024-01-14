@@ -8,9 +8,10 @@
 #pragma clang diagnostic pop
 
 #include "defines.h"
-#include "socket.h"
 
 #include "core/logger.h"
+
+#include "network/socket.h"
 
 struct PlpSocket {
   WSADATA data;
@@ -44,7 +45,7 @@ i32 socketCreate()
     return -1;
   }
 
-  status = getaddrinfo(NULL, "8289", &hints, &servInfo);
+  status = getaddrinfo(NULL, "9090", &hints, &servInfo);
 
   if (status != 0) {
     PLPFATAL("Error while getting addr info: [%d] %s", status, gai_strerror(status));

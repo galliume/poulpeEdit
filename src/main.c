@@ -3,47 +3,40 @@
 #include "defines.h"
 
 #include "network/socket.h"
+#include "core/logger.h"
 
-static void
-activate(GtkApplication* app, gpointer user_data)
-{
-  GtkWidget *window;
-
-  window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "PoulpeEdit");
-  gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-  gtk_window_present(GTK_WINDOW(window));
-
-  GtkWidget *view;
-  GtkTextBuffer *buffer;
-  char *text = user_data;
-
-  view = gtk_text_view_new();
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW (view));
-  gtk_text_buffer_set_text(buffer, text, -1);
-
-  gtk_window_set_child(GTK_WINDOW(window), view);
-}
+//#if PLPPLATFORM_WINDOWS == 1
+//int WINAPI handler(DWORD dwCtrlType)
+//{
+//  if (CTRL_C_EVENT == dwCtrlType)
+//  {
+//    PLPTRACE("on exit");
+//  }
+//  return 0;
+//}
+//#endif
 
 int
 main(int argc, char **argv)
 {
-  char* plpSocketMsg = "Server not connected";
+  PLPFATAL("fatal %f", 1.2f);
+  PLPERR("err %f", 1.2f);
+  PLPWARN("warn %f", 1.2f);
+  PLPINFO("info %f", 1.2f);
+  PLPDEBUG("debug %f", 1.2f);
+  PLPTRACE("trace %f", 1.2f);
+//#if PLPPLATFORM_WINDOWS == 1
+//  SetConsoleCtrlHandler(handler, 1);
+//#endif
 
-  if (0 == socketCreate()) {
-    plpSocketMsg = socketReceive();
-  }
+  //char* plpSocketMsg = "Server not connected";
 
-  GtkApplication *app;
-  int gtkStatus;
-
-  app = gtk_application_new("org.galliume", G_APPLICATION_DEFAULT_FLAGS);
-  g_signal_connect(app, "activate", G_CALLBACK(activate), plpSocketMsg);
-  gtkStatus = g_application_run(G_APPLICATION(app), argc, argv);
-  g_object_unref(app);
+  //if (0 == socketCreate()) {
+  //  plpSocketMsg = socketReceive();
+  //}
 
 
-  socketClose();
+  //socketClose();
 
-  return gtkStatus;
+  return 0;
 }
