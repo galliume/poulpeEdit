@@ -3,10 +3,11 @@
 #include <gtk/gtk.h>
 
 #include "defines.h"
+#include "views/application.h"
 
 typedef struct platformState {
   void* state;
-  GtkApplication* app;
+  PlpApplication* app;
   i32 status;
 } platformState;
 
@@ -32,5 +33,6 @@ f64 platformGetAbosluteTime();
 //GTK callbacks
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
+static void startup(void);
 static void activate(GtkApplication* app, gpointer user_data);
 #pragma clang diagnostic pop
