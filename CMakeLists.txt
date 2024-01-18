@@ -3,6 +3,16 @@
 #########################################################
 cmake_minimum_required(VERSION 3.25.2)
 
+if (USE_CCACHE)
+  find_program(CCACHE_PROGRAM ccache)
+  if(CCACHE_PROGRAM)
+    message(STATUS "Found ccache: ${CCACHE_PROGRAM}")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+  endif()
+else()
+  message(WARNING "ccache deactivated")
+endif()
+
 project(PoulpeEdit
   VERSION 0.1.1
   DESCRIPTION "Level editor for PoulpeEngine"
@@ -12,7 +22,12 @@ project(PoulpeEdit
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+set(CMAKE_GENERATOR_TOOLSET ${CMAKE_GENERATOR_TOOLSET})
+set(CMAKE_GENERATOR ${CMAKE_GENERATOR})
+set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 
 include(gitSubModule)
 
@@ -24,6 +39,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/core)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/platform)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/network)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/views)
   
 if(MSVC)
   set(DEBUG_OPTIONS "/WX;/MDd;/std:c17;")
@@ -46,6 +62,7 @@ if(MSVC)
     cairo-gobject-2
     cairo-script-interpreter-2
     epoxy-0
+    expat
     ffi-7
     fontconfig-1
     freetype-6
@@ -140,3 +157,10 @@ if(MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
+
+add_custom_command(
+  TARGET ${PROJECT_NAME} PRE_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_SOURCE_DIR}/assets
+      $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+  COMMENT "\r\n Copying assets")

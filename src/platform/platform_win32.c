@@ -1,3 +1,5 @@
+#include "core/logger.h"
+
 #include "platform/platform.h"
 
 #include <Windows.h>
@@ -11,8 +13,6 @@ typedef struct internalState {
 static f64 clockFrequency;
 static LARGE_INTEGER startTime;
 
-GtkTextBuffer *socketStatusBuffer;
-
 //LRESULT CALLBACK win32ProcessMessage(HWND hwnd, u32 msg, WPARAM wParam, LPARAM lParam);
 void platformStartup(
   platformState* platformState,
@@ -25,12 +25,6 @@ void platformStartup(
 {
   //platformState->state = platformAllocate(sizeof(struct internalState));
   //struct internalState* state = (struct internalState*)platformState->state;
-
-  socketStatusBuffer = gtk_text_buffer_new(NULL);
-
-  platformState->app = gtk_application_new("org.galliume", G_APPLICATION_DEFAULT_FLAGS);
-
-  g_signal_connect(platformState->app, "activate", G_CALLBACK(activate), platformState);
 
   LARGE_INTEGER frequency;
   QueryPerformanceCounter(&startTime);
@@ -124,22 +118,5 @@ f64 platformGetAbosluteTime()
 //  return DefWindowProcA(hwnd, msg, wParam, lParam);
 //}
 
-static void
-activate(GtkApplication* app, gpointer data)
-{
-  GtkWidget *window;
-
-  window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "PoulpeEdit");
-  gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-  gtk_window_present(GTK_WINDOW(window));
-
-  GtkWidget *view;
-  view = gtk_text_view_new();
-  gtk_text_view_set_buffer(GTK_TEXT_VIEW(view), socketStatusBuffer);
-  gtk_widget_set_name(view, "socket_status");
-
-  gtk_window_set_child(GTK_WINDOW(window), view);
-}
 
 #endif
