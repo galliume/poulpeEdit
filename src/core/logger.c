@@ -38,8 +38,8 @@ void logOutput(enum logLevel level, char const* message, ...)
   sprintf(output, "%s%s\n", levelString[level], msg);
 
   if (isError) {
-    platformConsoleWriteError(output, level);
+    platform_console_write_error(output, level);
   } else {
-    platformConsoleWrite(output, level);
+    platform_console_write(output, level);
   }
 }
