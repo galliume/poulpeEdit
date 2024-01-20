@@ -25,19 +25,19 @@ struct internalState {
 
 i32 socketCreate(platformSocket* platformSocket)
 {
-  if ((platformSocket->state = platformAllocate(sizeof(struct internalState))) == NULL) {
+  if ((platformSocket->state = platform_allocate(sizeof(struct internalState))) == NULL) {
     PLPFATAL("Error creating plpSocket\n");
   }
 
   struct internalState* state = (struct internalState*)platformSocket->state;
-  state->socket = platformAllocate(sizeof(SOCKET));
-  state->data = platformAllocate(sizeof(WSADATA));
-  state->sockAddrIn = platformAllocate(sizeof(SOCKADDR_IN6));
+  state->socket = platform_allocate(sizeof(SOCKET));
+  state->data = platform_allocate(sizeof(WSADATA));
+  state->sockAddrIn = platform_allocate(sizeof(SOCKADDR_IN6));
 
   i32 status;
   struct addrinfo* servInfo, *serv;
   struct addrinfo hints;
-  platformZeroMemory(&hints, sizeof(hints));
+  platform_zero_memory(&hints, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
   hints.ai_flags = AI_PASSIVE;
   hints.ai_socktype = SOCK_STREAM;
@@ -134,8 +134,8 @@ char* socketReceive(platformSocket* platformSocket)
   //   return -1;
   // }
 
-  char* recvbuf = platformAllocate(512);
-  platformZeroMemory(recvbuf, 512);
+  char* recvbuf = platform_allocate(512);
+  platform_zero_memory(recvbuf, 512);
   i32 recvbuflen = 512;
   i32 status = 0;
 

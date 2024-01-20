@@ -11,7 +11,7 @@ typedef struct platformState {
   i32 status;
 } platformState;
 
-void platformStartup(
+void platform_startup(
   platformState* platformState,
   char const * name,
   i32 x,
@@ -20,15 +20,16 @@ void platformStartup(
   i32 heihgt
 );
 
-void platformShutdown(platformState* platformState);
-void *platformAllocate(u64 size);
-void platformFree(void* memory);
-void *platformZeroMemory(void* memory, u64 size);
-void *platformCopyMemory(void* dest, void const * source, u64 size);
-void *platformSetMemory(void * dest, i32 value, u64 size);
-void platformConsoleWrite(char const* message, u8 color);
-void platformConsoleWriteError(char const* message, u8 color);
-f64 platformGetAbosluteTime();
+void platform_shutdown(platformState* platformState);
+void *platform_allocate(u64 size);
+void platform_free(void* memory);
+void *platform_zero_memory(void* memory, u64 size);
+void *platform_copy_memory(void* dest, void const * source, u64 size);
+void *platform_set_memory(void * dest, i32 value, u64 size);
+void platform_console_write(char const* message, u8 color);
+void platform_console_write_error(char const* message, u8 color);
+f64 platform_get_aboslute_time(void);
+void platform_sleep(i32 time);
 
 //GTK callbacks
 #pragma clang diagnostic push
