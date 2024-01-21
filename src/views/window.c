@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include "core/logger.h"
+#include "network/socket.h"
 
 G_DEFINE_FINAL_TYPE(PlpWindow, plp_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -30,20 +31,21 @@ socket_buffer_modified_changed(GtkWidget* view, gpointer user_data)
 static void
 plp_window_init(PlpWindow *win)
 {
-  win->socketStatusBuffer = gtk_text_buffer_new(NULL);
-  gtk_text_buffer_set_text(win->socketStatusBuffer, "socket status", -1);
+  GtkWidget *boxv = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_window_set_child(GTK_WINDOW(win), boxv);
 
-  gtk_window_set_title(GTK_WINDOW(win), "PoulpeEdit");
-  gtk_window_set_default_size(GTK_WINDOW(win), 800, 600);
-  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(win), TRUE);
+  win->socketStatusLabel = gtk_label_new("Not connected");
+  gtk_widget_set_name(win->socketStatusLabel, "socket_status_label");
+  win->socketBtnConnect = gtk_button_new_with_label("Connect to PoulpeEngine");
 
-  GtkWidget *view;
-  view = gtk_text_view_new();
-  gtk_text_view_set_buffer(GTK_TEXT_VIEW(view), win->socketStatusBuffer);
-  gtk_widget_set_name(view, "socket_status");
-  gtk_window_set_child(GTK_WINDOW(win), view);
+  GtkWidget* reloadSkyboxLabel = gtk_label_new("Load Skybox");
+  gtk_widget_set_name(win->socketStatusLabel, "load_skybox_status_label");
+  win->btnReloadSkybox = gtk_button_new_with_label("Load debug skybox");
 
-  g_signal_connect(win->socketStatusBuffer, "modified-changed", G_CALLBACK(socket_buffer_modified_changed), view);
+  gtk_box_append(GTK_BOX(boxv), win->socketStatusLabel);
+  gtk_box_append(GTK_BOX(boxv), win->socketBtnConnect);
+  gtk_box_append(GTK_BOX(boxv), reloadSkyboxLabel);
+  gtk_box_append(GTK_BOX(boxv), win->btnReloadSkybox);
 }
 
 static void
@@ -57,9 +59,4 @@ GtkWidget *
 plp_window_new(GtkApplication *app)
 {
   return GTK_WIDGET(g_object_new(PLP_TYPE_WINDOW, "application", app, NULL));
-}
-
-void update(char const* msg)
-{
-
 }

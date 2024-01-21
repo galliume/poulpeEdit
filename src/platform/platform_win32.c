@@ -14,14 +14,7 @@ static f64 clockFrequency;
 static LARGE_INTEGER startTime;
 
 //LRESULT CALLBACK win32ProcessMessage(HWND hwnd, u32 msg, WPARAM wParam, LPARAM lParam);
-void platform_startup(
-  platformState* platformState,
-  char const* name,
-  i32 x,
-  i32 y,
-  i32 width,
-  i32 heihgt
-)
+void platform_startup(platformState* platformState)
 {
   //platformState->state = platformAllocate(sizeof(struct internalState));
   //struct internalState* state = (struct internalState*)platformState->state;
@@ -34,10 +27,7 @@ void platform_startup(
 
 void platform_shutdown(platformState* platformState)
 {
-  if (platformState->app)
-  {
-    g_object_unref(platformState->app);
-  }
+
 }
 
 void *platform_allocate(u64 size)

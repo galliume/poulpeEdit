@@ -4,7 +4,9 @@
 
 struct _PlpWindow {
   GtkApplicationWindow parent;
-  GtkTextBuffer* socketStatusBuffer;
+  GtkWidget* socketStatusLabel;
+  GtkWidget* socketBtnConnect;
+  GtkWidget* btnReloadSkybox;
 };
 
 #define PLP_TYPE_WINDOW plp_window_get_type()
@@ -12,11 +14,10 @@ G_DECLARE_FINAL_TYPE(PlpWindow, plp_window, PLP, WINDOW, GtkApplicationWindow)
 
 GtkWidget * plp_window_new(GtkApplication *app);
 
-extern void update(char const * msg);
+extern void socket_buffer_modified_changed(GtkWidget* view, gpointer user_data);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 static void plp_window_dispose(GObject* gobject);
 static void plp_window_init(PlpWindow* win);
-extern void socket_buffer_modified_changed(GtkWidget* view, gpointer user_data);
 #pragma clang diagnostic pop
