@@ -24,4 +24,8 @@ void socketClose(platformSocket* platformSocket)
 
 }
 
+void socketSend(platformSocket* platformSocket)
+{
+
+}
 #endif

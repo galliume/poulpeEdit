@@ -3,14 +3,7 @@
 //@todo implement linux
 #if PLPPLATFORM_LINUX
 
-void platform_startup(
-  platformState* platformState,
-  char const* name,
-  i32 x,
-  i32 y,
-  i32 width,
-  i32 heihgt
-)
+void platform_startup(platformState* platformState)
 {
 
 }

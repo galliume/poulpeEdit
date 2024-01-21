@@ -18,9 +18,9 @@
 void* getInAddr(struct sockaddr* sa);
 
 struct internalState {
-  WSADATA* data;
-  SOCKET* socket;
-  SOCKADDR_IN6* sockAddrIn;
+  WSADATA data;
+  SOCKET socket;
+  SOCKADDR_IN6 sockAddrIn;
 } state;
 
 i32 socketCreate(platformSocket* platformSocket)
@@ -30,9 +30,11 @@ i32 socketCreate(platformSocket* platformSocket)
   }
 
   struct internalState* state = (struct internalState*)platformSocket->state;
-  state->socket = platform_allocate(sizeof(SOCKET));
-  state->data = platform_allocate(sizeof(WSADATA));
-  state->sockAddrIn = platform_allocate(sizeof(SOCKADDR_IN6));
+
+  //state->socket = platform_allocate(sizeof(SOCKET));
+  //state->data = platform_allocate(sizeof(WSADATA));
+  //state->sockAddrIn = platform_allocate(sizeof(SOCKADDR_IN6));
+
 
   i32 status;
   struct addrinfo* servInfo, *serv;
@@ -42,7 +44,7 @@ i32 socketCreate(platformSocket* platformSocket)
   hints.ai_flags = AI_PASSIVE;
   hints.ai_socktype = SOCK_STREAM;
 
-  status = WSAStartup(MAKEWORD(2, 2), state->data);
+  status = WSAStartup(MAKEWORD(2, 2), &state->data);
 
   if (status != 0 ) {
     PLPFATAL("WSAStartup failed with error: [%d] %s", status, gai_strerror(status));
@@ -58,14 +60,13 @@ i32 socketCreate(platformSocket* platformSocket)
     return -1;
   }
 
-  SOCKET sockfd = 0;
   b8 found = FALSE;
 
   for(serv = servInfo; serv != NULL; serv = serv->ai_next) {
     if (serv->ai_family == AF_INET) {
-      sockfd = socket(serv->ai_family, serv->ai_socktype, serv->ai_protocol);
+      state->socket = socket(serv->ai_family, serv->ai_socktype, serv->ai_protocol);
 
-      if (sockfd == INVALID_SOCKET) {
+      if (state->socket == INVALID_SOCKET) {
         PLPWARN("Socket creation failed");
         perror("client: socket");
         continue;
@@ -73,9 +74,9 @@ i32 socketCreate(platformSocket* platformSocket)
       found = TRUE;
       break;
     } else if (serv->ai_family == AF_INET6) {
-      sockfd = socket(serv->ai_family, serv->ai_socktype, serv->ai_protocol);
+      state->socket = socket(serv->ai_family, serv->ai_socktype, serv->ai_protocol);
 
-      if (sockfd == INVALID_SOCKET) {
+      if (state->socket == INVALID_SOCKET) {
         PLPWARN("Socket creation failed");
         perror("client: socket");
         continue;
@@ -90,14 +91,14 @@ i32 socketCreate(platformSocket* platformSocket)
     return -1;
   }
 
-  if (-1 == sockfd) {
+  if (-1 == state->socket) {
     PLPFATAL("Error while creating the socket");
     perror("socket");
     return -1;
   }
 
   i32 option = 1;
-  setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *) & option, sizeof option);
+  setsockopt(state->socket, SOL_SOCKET, SO_REUSEADDR, (char *) & option, sizeof option);
 
   status = WSAGetLastError();
 
@@ -105,11 +106,12 @@ i32 socketCreate(platformSocket* platformSocket)
     PLPERR("Setsockopt failed [%d] %s", status, gai_strerror(status));
   }
 
-  status = connect(sockfd, serv->ai_addr, serv->ai_addrlen);
+  status = connect(state->socket, serv->ai_addr, serv->ai_addrlen);
   
   if (status == SOCKET_ERROR) {
     int err = WSAGetLastError();
     PLPERR("Error while connecting the socket: [%d] %s", err, gai_strerror(err));
+    return -1;
   }
 
   char s[INET6_ADDRSTRLEN];
@@ -117,8 +119,6 @@ i32 socketCreate(platformSocket* platformSocket)
   PLPTRACE("Connecting to %s", s);
 
   freeaddrinfo(servInfo);
-
-  *state->socket = sockfd;
 
   return 0;
 }
@@ -141,13 +141,12 @@ char* socketReceive(platformSocket* platformSocket)
 
   struct internalState* state = (struct internalState*)platformSocket->state;
 
-  status = recv(*state->socket, recvbuf, recvbuflen, 0);
+  status = recv(state->socket, recvbuf, recvbuflen, 0);
   if (-1 == status) {
     int err = WSAGetLastError();
+    recvbuf = gai_strerror(err);
     PLPERR("Error while recv: [%d] %s", err, gai_strerror(err));
-  } 
-  printf("%d bytes received", status);
-  printf("%s received", recvbuf);
+  }
 
   return recvbuf;
 }
@@ -156,7 +155,7 @@ void socketClose(platformSocket* platformSocket)
 {
   struct internalState* state = (struct internalState*)platformSocket->state;
 
-  closesocket(*state->socket);
+  closesocket(state->socket);
   WSACleanup();
   free(state);
 }
@@ -167,6 +166,27 @@ void *getInAddr(struct sockaddr *sa)
       return &(((struct sockaddr_in*)sa)->sin_addr);
   }
   return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+void
+socketSend(platformSocket* platformSocket)
+{
+  struct internalState* state = (struct internalState*)platformSocket->state;
+
+  char* msg = "test!";
+  i32 len = strlen(msg);
+  i32 bytes = 0;
+
+  //@todo check if all bytes has been sent
+  bytes = send(state->socket, msg, len, 0);
+  perror("socket sent");
+  PLPTRACE("%s:%d", "bytes sent", bytes);
+
+  if (bytes == strlen(msg)) {
+    bytes = send(state->socket, "\0", 2, 0);
+  }
+  PLPTRACE("%s:%d", "bytes sent", bytes);
+  perror("socket sent end");
 }
 
 #endif
