@@ -12,6 +12,6 @@ PlpApplication * plp_application_new(const char* application_id, GApplicationFla
 static void plp_application_init(PlpApplication *app);
 static void app_startup(GApplication* application);
 static void app_activate(GApplication* application);
-static void socket_connect(GtkButton* btn, gpointer user_data);
+static void socket_connect(PlpApplication* app);
 static void reload_skybox(GtkButton* btn, gpointer user_data);
 #pragma clang diagnostic pop

@@ -57,11 +57,14 @@ app_startup(GApplication* application)
   gtk_style_context_add_provider_for_display(display, GTK_STYLE_PROVIDER(app->provider),
                                                GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
+  GSimpleAction *act_connect = g_simple_action_new("connect", NULL);
+  g_signal_connect_swapped(act_connect, "activate", G_CALLBACK(socket_connect), app);
+  g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(act_connect));
+
   GSimpleAction *act_quit = g_simple_action_new("quit", NULL);
   g_signal_connect_swapped(act_quit, "activate", G_CALLBACK(g_application_quit), app);
   g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(act_quit));
 
-  g_signal_connect(app->win->socketBtnConnect, "clicked", G_CALLBACK(socket_connect), app);
   g_signal_connect(app->win->btnReloadSkybox, "clicked", G_CALLBACK(reload_skybox), app);
 
   /*GtkWidget *image = gtk_picture_new_for_filename("./assets/mpoulpe.png");
@@ -75,6 +78,9 @@ app_startup(GApplication* application)
   GMenu *menubar = g_menu_new();
   GMenuItem *menu_item_menu = g_menu_item_new("Menu", NULL);
   GMenu *menu = g_menu_new();
+  GMenuItem *menu_item_connect = g_menu_item_new("Connect", "app.connect");
+  g_menu_append_item(menu, menu_item_connect);
+  g_object_unref(menu_item_connect);
   GMenuItem *menu_item_quit = g_menu_item_new("Quit", "app.quit");
   g_menu_append_item(menu, menu_item_quit);
   g_object_unref(menu_item_quit);
@@ -120,10 +126,8 @@ PlpApplication *plp_application_new(const char* application_id, GApplicationFlag
 }
 
 static void
-socket_connect(GtkButton* btn, gpointer user_data)
+socket_connect(PlpApplication* app)
 {
-  PlpApplication* app = PLP_APPLICATION(user_data);
-
   char* msg;
 
   if (0 == socketCreate(app->engineSocket)) {
