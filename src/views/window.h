@@ -5,7 +5,6 @@
 struct _PlpWindow {
   GtkApplicationWindow parent;
   GtkWidget* socketStatusLabel;
-  GtkWidget* socketBtnConnect;
   GtkWidget* btnReloadSkybox;
 };
 
