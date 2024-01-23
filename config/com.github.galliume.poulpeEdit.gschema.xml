@@ -11,10 +11,5 @@
       <summary>Height</summary>
       <description>Application height.</description>
     </key>	
-    <key name="font-desc" type="s">
-      <default>'Monospace 12'</default>
-      <summary>Font</summary>
-      <description>A font to be used for textview.</description>
-    </key>
   </schema>
 </schemalist>

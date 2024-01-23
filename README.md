@@ -2,6 +2,14 @@
 
 PoulpeEdit is the level editor that comes with [PoulpeEngine](https://github.com/galliume/poulpeEngine)
 
+### This project is a never ending educationnal exercice about C and GTK4.
+
+[State of the project](https://github.com/users/galliume/projects/5)
+
+[In video](https://www.youtube.com/watch?v=C7p9z6LhAig&list=PL4-Os8BWDCPmZt5HvJrSo6QDHkD9J4fJF)
+
+<img src="https://github.com/galliume/poulpeEdit/blob/main/screenshots/poulpeEdit.gif" width="800" height="600">
+
 ## Build it
 
 ### GTK for Windows

@@ -22,8 +22,6 @@ app_activate(GApplication* application)
 {
   PlpApplication *app = PLP_APPLICATION(application);
 
-  PLPWARN("%s:%s", "font-desc", g_settings_get_string(app->settings, "font-desc"));
-
   app->platformState = platform_allocate(sizeof(struct platformState));
   platform_startup(app->platformState);
 
