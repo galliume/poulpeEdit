@@ -173,7 +173,7 @@ socketSend(platformSocket* platformSocket)
 {
   struct internalState* state = (struct internalState*)platformSocket->state;
 
-  char* msg = "test!";
+  char* msg = "updateSkybox_bluesky";
   i32 len = strlen(msg);
   i32 bytes = 0;
 
