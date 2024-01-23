@@ -31,39 +31,50 @@ socket_buffer_modified_changed(GtkWidget* view, gpointer user_data)
 static void
 plp_window_init(PlpWindow *win)
 {
-  GtkWidget *body = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *body = gtk_grid_new();
   gtk_window_set_child(GTK_WINDOW(win), body);
 
-  GtkWidget* frameTop = gtk_frame_new(NULL);
-  gtk_widget_set_name(frameTop, "frameTop");
-  gtk_widget_set_vexpand(frameTop, TRUE);
-  gtk_box_append(GTK_BOX(body), frameTop);
+  GtkWidget* frameTopLeft = gtk_frame_new(NULL);
+  gtk_widget_set_name(frameTopLeft, "frameTopLeft");
+  gtk_widget_set_halign(GTK_WIDGET(frameTopLeft), GTK_ALIGN_START);
+  gtk_widget_set_vexpand(GTK_WIDGET(frameTopLeft), TRUE);
+  gtk_grid_attach(GTK_GRID(body), frameTopLeft, 0, 0, 1, 1);
 
-  GtkWidget *boxv = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  gtk_frame_set_child(GTK_FRAME(frameTop), boxv);
-
-  GtkWidget* reloadSkyboxLabel = gtk_label_new("Load Skybox");
-  gtk_widget_set_name(win->socketStatusLabel, "load_skybox_status_label");
+  GtkWidget *grid = gtk_grid_new();
+  gtk_frame_set_child(GTK_FRAME(frameTopLeft), grid);
 
   win->btnReloadSkybox = gtk_button_new_with_label("Load bluesky skybox");
+  gtk_widget_set_name(win->btnReloadSkybox, "load_skybox_status_label");
+  gtk_grid_attach(GTK_GRID(grid), win->btnReloadSkybox, 0, 0, 1, 1);
 
-  gtk_box_append(GTK_BOX(boxv), reloadSkyboxLabel);
-  gtk_box_append(GTK_BOX(boxv), win->btnReloadSkybox);
+  GtkWidget* frameTopRight = gtk_frame_new(NULL);
+  gtk_widget_set_name(frameTopRight, "frameTopRight");
+  gtk_widget_set_vexpand(GTK_WIDGET(frameTopRight), TRUE);
+  gtk_widget_set_hexpand(GTK_WIDGET(frameTopRight), TRUE);
+  gtk_widget_set_halign(GTK_WIDGET(frameTopRight), GTK_ALIGN_FILL);
+  gtk_grid_attach(GTK_GRID(body), frameTopRight, 1, 0, 1, 1);
+
+  GtkWidget* test = gtk_label_new("LevelMap");
+  gtk_widget_set_halign(GTK_WIDGET(test), GTK_ALIGN_FILL);
+  gtk_frame_set_child(GTK_FRAME(frameTopRight), test);
+
+  //GtkWidget *image = gtk_picture_new_for_filename("./assets/mpoulpe.png");
+  //gtk_widget_set_name(image, "mrpoulpe");
+  //gtk_widget_set_halign(GTK_WIDGET(image), GTK_ALIGN_FILL);
+  //gtk_frame_set_child(GTK_FRAME(frameTopRight), image);
 
   GtkWidget* frameBottom = gtk_frame_new(NULL);
   gtk_widget_set_name(frameBottom, "frameBottom");
-  gtk_box_append(GTK_BOX(body), frameBottom);
+  gtk_grid_attach(GTK_GRID(body), frameBottom, 0, 1, 2, 1);
 
   GtkWidget *footer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_name(footer, "status_footer");
   gtk_box_set_baseline_position(GTK_BOX(footer), GTK_BASELINE_POSITION_BOTTOM);
+  gtk_frame_set_child(GTK_FRAME(frameBottom), footer);
 
   win->socketStatusLabel = gtk_label_new("Not connected");
   gtk_widget_set_name(win->socketStatusLabel, "socket_status_label");
-
   gtk_box_append(GTK_BOX(footer), win->socketStatusLabel);
-
-  gtk_frame_set_child(GTK_FRAME(frameBottom), footer);
 }
 
 static void

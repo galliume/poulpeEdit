@@ -11,7 +11,10 @@
 int
 main(int argc, char **argv)
 {
-  PlpApplication* app = plp_application_new("org.galliume.plpedit", G_APPLICATION_DEFAULT_FLAGS);
+  //@todo tmp
+  _putenv("GSETTINGS_SCHEMA_DIR=./config");
+
+  PlpApplication* app = plp_application_new("org.galliume.poulpeEdit", G_APPLICATION_DEFAULT_FLAGS);
   g_application_run(G_APPLICATION(app), 0, NULL);
 
   return 0;

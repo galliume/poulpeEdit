@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/github/galliume/poulpeEdit/" id="com.github.galliume.poulpeEdit">
+    <key name="app-width" type="i">
+      <default>1200</default>
+      <summary>Width</summary>
+      <description>Application width.</description>
+    </key>
+    <key name="app-height" type="i">
+      <default>720</default>
+      <summary>Height</summary>
+      <description>Application height.</description>
+    </key>	
+    <key name="font-desc" type="s">
+      <default>'Monospace 12'</default>
+      <summary>Font</summary>
+      <description>A font to be used for textview.</description>
+    </key>
+  </schema>
+</schemalist>

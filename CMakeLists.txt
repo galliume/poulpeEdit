@@ -164,3 +164,15 @@ add_custom_command(
       ${CMAKE_CURRENT_SOURCE_DIR}/assets
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
   COMMENT "\r\n Copying assets")
+
+add_custom_command(
+  TARGET ${PROJECT_NAME} PRE_BUILD
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/gtk/bin/glib-compile-schemas ${CMAKE_CURRENT_SOURCE_DIR}/config
+  COMMENT "Compiling gschemas")
+ 
+add_custom_command(
+  TARGET ${PROJECT_NAME} PRE_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_SOURCE_DIR}/config
+      $<TARGET_FILE_DIR:${PROJECT_NAME}>/config/
+  COMMENT "Copying config")
