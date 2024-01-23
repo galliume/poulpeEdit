@@ -22,6 +22,8 @@ app_activate(GApplication* application)
 {
   PlpApplication *app = PLP_APPLICATION(application);
 
+  PLPWARN("%s:%s", "font-desc", g_settings_get_string(app->settings, "font-desc"));
+
   app->platformState = platform_allocate(sizeof(struct platformState));
   platform_startup(app->platformState);
 
@@ -30,10 +32,6 @@ app_activate(GApplication* application)
   }
 
   gtk_label_set_text(GTK_LABEL(PLP_WINDOW(app->win)->socketStatusLabel), "Not connected");
-
-  gtk_window_set_title(GTK_WINDOW(app->win), "PoulpeEdit");
-  gtk_window_set_default_size(GTK_WINDOW(app->win), 800, 600);
-  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(app->win), TRUE);
 
   gtk_window_present(GTK_WINDOW(app->win));
 }
@@ -48,6 +46,14 @@ app_startup(GApplication* application)
   G_APPLICATION_CLASS(plp_application_parent_class)->startup(application);
 
   app->win = PLP_WINDOW(plp_window_new(GTK_APPLICATION(app)));
+
+  i32 appWidth = 800, appHeight = 600;
+  appWidth = g_settings_get_int(app->settings, "app-width");
+  appHeight = g_settings_get_int(app->settings, "app-height");
+
+  gtk_window_set_title(GTK_WINDOW(app->win), "PoulpeEdit");
+  gtk_window_set_default_size(GTK_WINDOW(app->win), appWidth, appHeight);
+  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(app->win), TRUE);
 
   gtk_css_provider_load_from_file(provider, g_file_new_for_path("./assets/css/styles.css"));
   display = gdk_display_get_default();
@@ -66,14 +72,6 @@ app_startup(GApplication* application)
   g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(act_quit));
 
   g_signal_connect(app->win->btnReloadSkybox, "clicked", G_CALLBACK(reload_skybox), app);
-
-  /*GtkWidget *image = gtk_picture_new_for_filename("./assets/mpoulpe.png");
-  gtk_widget_set_name(image, "mrpoulpe");
-
-  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  gtk_box_append(GTK_BOX(box), image);*/
-
-  //gtk_window_set_child(GTK_WINDOW(app->win), box);
 
   GMenu *menubar = g_menu_new();
   GMenuItem *menu_item_menu = g_menu_item_new("Menu", NULL);
@@ -96,6 +94,7 @@ static void
 plp_application_init(PlpApplication *app)
 {
   app->provider = gtk_css_provider_new();
+  app->settings = g_settings_new("com.github.galliume.poulpeEdit");
 }
 
 static void
@@ -106,7 +105,7 @@ plp_application_dispose(GObject *gobject)
   platform_free(app->win);
   platform_free(app->platformState);
 
-  //g_clear_object(&app->settings);
+  g_clear_object(&app->settings);
   g_clear_object(&app->provider);
   G_OBJECT_CLASS(plp_application_parent_class)->dispose(gobject);
 }
