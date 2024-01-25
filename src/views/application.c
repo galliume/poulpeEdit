@@ -1,9 +1,12 @@
 #include "application.h"
 
+#include "core/file.h"
 #include "core/logger.h"
 #include "platform/platform.h"
 #include "network/socket.h"
 #include "views/window.h"
+
+#include <cJSON.h>
 
 struct _PlpApplication
 {
@@ -20,6 +23,18 @@ G_DEFINE_FINAL_TYPE(PlpApplication, plp_application, GTK_TYPE_APPLICATION)
 static void
 app_activate(GApplication* application)
 {
+  cJSON* settings = read_json_file("./config/poulpeEdit.json");
+
+  if (NULL != settings) {
+    cJSON* config = cJSON_GetObjectItemCaseSensitive(settings, "config");
+
+    if (cJSON_IsString(config) && (config->valuestring != NULL))
+    {
+      printf("Checking monitor \"%s\"\n", config->valuestring);
+    }
+  }
+  cJSON_Delete(settings);
+
   PlpApplication *app = PLP_APPLICATION(application);
 
   app->platformState = platform_allocate(sizeof(struct platformState));
