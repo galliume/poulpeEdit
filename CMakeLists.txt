@@ -53,10 +53,30 @@ target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTION
 target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 #########################################################
 
-#########################################################7
+#########################################################
 ##################### External libs #####################
 #########################################################
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/cJSON)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${PROJECT_SOURCE_DIR}/vendor/cJSON
+)
+
+list(APPEND EXTRA_LIBS cjson)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTRA_LIBS})
+
+set_target_properties(cjson PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+    LIBRARY_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+	RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+)
+
 if(MSVC)
+  add_definitions(
+  -D_CRT_SECURE_NO_WARNINGS
+  -DWIN32_LEAN_AND_MEAN)
+	
   list(APPEND GTK_WIN_DLLS
     cairo-2
     cairo-gobject-2

@@ -44,7 +44,11 @@ then
     cmake -B ./build \
           -DCMAKE_C_COMPILER=clang \
           -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_GENERATOR_TOOLSET="ClangCL"
+          -DCMAKE_GENERATOR_TOOLSET="ClangCL" \
+		  -DENABLE_CJSON_TEST=OFF \
+		  -DENABLE_CUSTOM_COMPILER_FLAGS=OFF \
+		  -DENABLE_CJSON_VERSION_SO=OFF
+		  
 fi
 
 if [[ buildPoulpeEdit -eq 1 ]]

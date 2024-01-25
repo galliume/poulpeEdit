@@ -1,9 +1,9 @@
+#include "logger.h"
+
 //@todo tmp
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-
-#include "logger.h"
 
 #include "platform/platform.h"
 
