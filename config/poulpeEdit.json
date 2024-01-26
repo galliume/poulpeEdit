@@ -1,10 +1,10 @@
 {
 	"poulpeEnginePath": "../poulpeEngine",
-	"config": "poulpeEngine.json",
-	"levelsFolder": "levels",
-	"shaders": "shaders.json",
-	"textures": "textures.json",
-	"sounds": "sounds.json",
+	"config": "config/poulpeEngine.json",
+	"levelsFolder": "config/levels",
+	"shaders": "config/shaders.json",
+	"textures": "config/textures.json",
+	"sounds": "config/sounds.json",
 	"args": {
 	}
 }
