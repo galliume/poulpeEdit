@@ -10,10 +10,11 @@
 
 void engine_load_config(engineConfig* engineConf)
 {
-  cJSON* settings = read_json_file("./config/poulpeEdit.json");
+  u64 size = 0;
+  cJSON* settings = read_json_file("./config/poulpeEdit.json", &size);
 
   if (NULL != settings) {
-    engineConf->paths = platform_allocate(sizeof(settings));
+    engineConf->paths = platform_allocate(size);
     engineConf->paths = settings;
 
     cJSON* poulpeEnginePath = cJSON_GetObjectItemCaseSensitive(settings, "poulpeEnginePath");
@@ -23,7 +24,7 @@ void engine_load_config(engineConfig* engineConf)
     {
       if (cJSON_IsString(textures) && (textures->valuestring != NULL))
       {
-        i32 len = 2 + strlen(poulpeEnginePath->valuestring) + strlen(textures->valuestring);
+        u64 len = 2 + strlen(poulpeEnginePath->valuestring) + strlen(textures->valuestring);
         char* texturesPath = platform_allocate(len);
         texturesPath = platform_zero_memory(texturesPath, len);
 
@@ -32,9 +33,10 @@ void engine_load_config(engineConfig* engineConf)
         strncat(texturesPath, textures->valuestring, strlen(textures->valuestring));
         strncat(texturesPath, "\0", 1);
 
-        cJSON* textures = read_json_file(texturesPath);
+        u64 size = 0;
+        cJSON* textures = read_json_file(texturesPath, &size);
 
-        engineConf->textures = platform_allocate(sizeof(textures));
+        engineConf->textures = platform_allocate(size);
         engineConf->textures = textures;
 
         platform_free(texturesPath);

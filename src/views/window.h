@@ -5,7 +5,8 @@
 struct _PlpWindow {
   GtkApplicationWindow parent;
   GtkWidget* socketStatusLabel;
-  GtkWidget* btnReloadSkybox;
+  GtkWidget* skyboxDropDown;
+  GtkStringList* skyboxDropDownModel;
 };
 
 #define PLP_TYPE_WINDOW plp_window_get_type()
@@ -19,4 +20,5 @@ extern void socket_buffer_modified_changed(GtkWidget* view, gpointer user_data);
 #pragma clang diagnostic ignored "-Wunused-function"
 static void plp_window_dispose(GObject* gobject);
 static void plp_window_init(PlpWindow* win);
+
 #pragma clang diagnostic pop

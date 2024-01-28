@@ -10,6 +10,7 @@
 #include "views/window.h"
 
 #include <cJSON.h>
+#include <string.h>
 
 struct _PlpApplication
 {
@@ -28,22 +29,7 @@ static void
 app_activate(GApplication* application)
 {
   PlpApplication *app = PLP_APPLICATION(application);
-
-  app->platformState = platform_allocate(sizeof(struct platformState));
-  app->engineConfig = platform_allocate(sizeof(struct engineConfig));
-
-  engine_load_config(app->engineConfig);
-  cJSON* a = engine_read_config(app->engineConfig);
-
-  char* string = cJSON_Print(a);
-  PLPDEBUG("%s", string);
-
-  platform_startup(app->platformState);
-
-  if ((app->engineSocket = platform_allocate(sizeof(struct platformSocket))) == NULL) {
-    PLPFATAL("Error creating platformSocket\n");
-  }
-
+ 
   gtk_label_set_text(GTK_LABEL(PLP_WINDOW(app->win)->socketStatusLabel), "Not connected");
 
   gtk_window_present(GTK_WINDOW(app->win));
@@ -52,7 +38,17 @@ app_activate(GApplication* application)
 static void
 app_startup(GApplication* application)
 {
-  PlpApplication* app = PLP_APPLICATION(application);
+  PlpApplication *app = PLP_APPLICATION(application);
+
+  app->platformState = platform_allocate(sizeof(struct platformState));
+  platform_startup(app->platformState);
+
+  app->engineConfig = platform_allocate(sizeof(struct engineConfig));
+
+  if ((app->engineSocket = platform_allocate(sizeof(struct platformSocket))) == NULL) {
+    PLPFATAL("Error creating platformSocket\n");
+  }
+
   GtkCssProvider *provider = gtk_css_provider_new();
   GdkDisplay *display;
 
@@ -84,7 +80,7 @@ app_startup(GApplication* application)
   g_signal_connect_swapped(act_quit, "activate", G_CALLBACK(g_application_quit), app);
   g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(act_quit));
 
-  g_signal_connect(app->win->btnReloadSkybox, "clicked", G_CALLBACK(reload_skybox), app);
+  g_signal_connect_after(app->win->skyboxDropDown, "notify::selected", G_CALLBACK(reload_skybox), app);
 
   GMenu *menubar = g_menu_new();
   GMenuItem *menu_item_menu = g_menu_item_new("Menu", NULL);
@@ -101,6 +97,22 @@ app_startup(GApplication* application)
   g_object_unref(menu_item_menu);
 
   gtk_application_set_menubar(GTK_APPLICATION(app), G_MENU_MODEL(menubar));
+
+  engine_load_config(app->engineConfig);
+  cJSON * config = engine_read_config(app->engineConfig);
+
+  char* string = cJSON_Print(config);
+  PLPDEBUG("%s", string);
+
+  cJSON const* skyboxs = cJSON_GetObjectItemCaseSensitive(config, "skybox");
+  cJSON * skybox = NULL;
+
+  cJSON_ArrayForEach(skybox, skyboxs) {
+    if (cJSON_IsArray(skybox) && (skybox->string != NULL)) {
+      gtk_string_list_append(app->win->skyboxDropDownModel, skybox->string);
+    }
+  }
+  cJSON_Delete(config);
 }
 
 static void
@@ -151,9 +163,23 @@ socket_connect(PlpApplication* app)
 }
 
 static void
-reload_skybox(GtkButton* btn, gpointer user_data)
+reload_skybox(GtkWidget* dropDown, gpointer user_data, PlpApplication* app)
 {
-  PlpApplication* app = PLP_APPLICATION(user_data);
+  if (gtk_drop_down_get_selected(GTK_DROP_DOWN(dropDown)) != 0) {
 
-  socketSend(app->engineSocket);
+    char const * selected = gtk_string_list_get_string(
+      GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(dropDown))),
+      gtk_drop_down_get_selected(GTK_DROP_DOWN(dropDown)));
+
+    char const* fn = "updateSkybox_";
+    i32 const size = sizeof(fn) + strlen(selected);
+
+    char* message = platform_allocate(size);
+    message = platform_zero_memory(message, size);
+
+    strncat(message, fn, strlen(fn));
+    strncat(message, selected, strlen(selected));
+
+    socketSend(app->engineSocket, message);
+  }
 }

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-char * read_file(char const* file_path)
+char * read_file(char const* file_path, u64 *size)
 {
   FILE* fp;
   char* source = NULL;
@@ -26,9 +26,9 @@ char * read_file(char const* file_path)
       if (fseek(fp, 0L, SEEK_SET) != 0) {
         PLPERR("%s: %s", "error while reading file size", file_path);
       }
-      size_t len = fread(source, sizeof(char), bufsize, fp);
-
-      PLPTRACE("%s: %d %s: %s", "Read", len, "bytes from file", file_path);
+      *size = fread(source, sizeof(char), bufsize, fp);
+      
+      PLPTRACE("%s: %d %s: %s", "Read", *size, "bytes from file", file_path);
       
       if (ferror(fp) != 0) {
         PLPERR("%s: %s", "error while reading file", file_path);
@@ -41,9 +41,9 @@ char * read_file(char const* file_path)
   return source;
 }
 
-cJSON* read_json_file(char const* file_path)
+cJSON* read_json_file(char const* file_path, u64 *size)
 {
-  char* buffer = read_file(file_path);
+  char* buffer = read_file(file_path, size);
 
   cJSON *json = cJSON_Parse(buffer);
   

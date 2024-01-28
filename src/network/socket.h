@@ -9,4 +9,4 @@ typedef struct platformSocket {
 i32 socketCreate(platformSocket* platformSocket);
 char* socketReceive(platformSocket* platformSocket);
 void socketClose(platformSocket* platformSocket);
-void socketSend(platformSocket* platformSocket);
+void socketSend(platformSocket* platformSocket, char const * message);
