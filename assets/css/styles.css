@@ -1,24 +1,14 @@
 headerbar, menubar, window {
 	font-family: arial;
-	background: #2F383B;
-	color: #6B9C3E;
 	border-style: solid;
-	border-color: #6B9C3E;
-}
-
-headerbar button {
-	color:#6B9C3E;
 }
 
 frame {
 	border-style: solid;
-	border-color: #6B9C3E;
 	margin: 5px 5px 5px 5px;
 	padding: 10px;
-	background: #2F383B;
 }
 
-image#mrpoulpe {
-	padding: 0px;
-	border: 1px solid red;
+#frameTopLeft label {
+	margin: 2px 20px 2px 2px;
 }

@@ -81,6 +81,7 @@ app_startup(GApplication* application)
   g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(act_quit));
 
   g_signal_connect_after(app->win->skyboxDropDown, "notify::selected", G_CALLBACK(reload_skybox), app);
+  g_signal_connect_after(app->win->levelDropDown, "notify::selected", G_CALLBACK(reload_level), app);
 
   GMenu *menubar = g_menu_new();
   GMenuItem *menu_item_menu = g_menu_item_new("Menu", NULL);
@@ -99,12 +100,12 @@ app_startup(GApplication* application)
   gtk_application_set_menubar(GTK_APPLICATION(app), G_MENU_MODEL(menubar));
 
   engine_load_config(app->engineConfig);
-  cJSON * config = engine_read_config(app->engineConfig);
+  cJSON * textures = engine_get_config_textures(app->engineConfig);
 
-  char* string = cJSON_Print(config);
-  PLPDEBUG("%s", string);
+  //char* string = cJSON_Print(config);
+  //PLPDEBUG("%s", string);
 
-  cJSON const* skyboxs = cJSON_GetObjectItemCaseSensitive(config, "skybox");
+  cJSON const* skyboxs = cJSON_GetObjectItemCaseSensitive(textures, "skybox");
   cJSON * skybox = NULL;
 
   cJSON_ArrayForEach(skybox, skyboxs) {
@@ -112,7 +113,14 @@ app_startup(GApplication* application)
       gtk_string_list_append(app->win->skyboxDropDownModel, skybox->string);
     }
   }
-  cJSON_Delete(config);
+
+  cJSON_Delete(textures);
+
+  char** levels = engine_get_config_levels(app->engineConfig);
+
+  for (int i = 0; i < app->engineConfig->levelsSize; ++i) {
+    gtk_string_list_append(app->win->levelDropDownModel, levels[i]);
+  }
 }
 
 static void
@@ -165,13 +173,24 @@ socket_connect(PlpApplication* app)
 static void
 reload_skybox(GtkWidget* dropDown, gpointer user_data, PlpApplication* app)
 {
+  reload("updateSkybox_", dropDown, app);
+}
+
+static void
+reload_level(GtkWidget* dropDown, gpointer user_data, PlpApplication* app)
+{
+  reload("updateLevel_", dropDown, app);
+}
+
+static void
+reload(char const* fn, GtkWidget* dropDown, PlpApplication* app)
+{
   if (gtk_drop_down_get_selected(GTK_DROP_DOWN(dropDown)) != 0) {
 
     char const * selected = gtk_string_list_get_string(
       GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(dropDown))),
       gtk_drop_down_get_selected(GTK_DROP_DOWN(dropDown)));
 
-    char const* fn = "updateSkybox_";
     i32 const size = sizeof(fn) + strlen(selected);
 
     char* message = platform_allocate(size);

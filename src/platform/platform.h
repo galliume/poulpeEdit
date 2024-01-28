@@ -22,3 +22,5 @@ void platform_console_write(char const* message, u8 color);
 void platform_console_write_error(char const* message, u8 color);
 f64 platform_get_aboslute_time(void);
 void platform_sleep(i32 time);
+u64 platform_count_files_in_directory(char const* directoryPath);
+char ** platform_list_directory(char const* directoryPath, u64* size);
