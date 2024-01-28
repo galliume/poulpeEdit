@@ -47,13 +47,23 @@ plp_window_init(PlpWindow *win)
   GtkWidget* skyboxLabel = gtk_label_new("Skybox");
   gtk_grid_attach(GTK_GRID(grid), skyboxLabel, 0, 0, 1, 1);
 
-  const char *string[2] = { "", NULL};
-  win->skyboxDropDownModel = gtk_string_list_new((const char* const*) string);
+  const char *initDropDown[2] = { "----------", NULL};
+  win->skyboxDropDownModel = gtk_string_list_new((const char* const*) initDropDown);
 
   win->skyboxDropDown = gtk_drop_down_new(G_LIST_MODEL(win->skyboxDropDownModel), NULL);
-  gtk_drop_down_set_selected(GTK_DROP_DOWN(win->skyboxDropDown), GTK_INVALID_LIST_POSITION);
+  gtk_drop_down_set_selected(GTK_DROP_DOWN(win->skyboxDropDown), 0);
 
-  gtk_grid_attach(GTK_GRID(grid), win->skyboxDropDown, 0, 1, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), win->skyboxDropDown, 1, 0, 1, 1);
+
+  GtkWidget* levelLabel = gtk_label_new("Level");
+  gtk_grid_attach(GTK_GRID(grid), levelLabel, 0, 1, 1, 1);
+
+  win->levelDropDownModel = gtk_string_list_new((const char* const*) initDropDown);
+
+  win->levelDropDown = gtk_drop_down_new(G_LIST_MODEL(win->levelDropDownModel), NULL);
+  gtk_drop_down_set_selected(GTK_DROP_DOWN(win->levelDropDown), 0);
+
+  gtk_grid_attach(GTK_GRID(grid), win->levelDropDown, 1, 1, 1, 1);
 
   GtkWidget* frameTopRight = gtk_frame_new(NULL);
   gtk_widget_set_name(frameTopRight, "frameTopRight");

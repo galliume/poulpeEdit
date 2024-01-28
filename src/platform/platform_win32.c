@@ -3,6 +3,7 @@
 #include "platform/platform.h"
 
 #include <Windows.h>
+#include <fileapi.h>
 
 #if PLPPLATFORM_WINDOWS
 
@@ -92,6 +93,68 @@ void platform_sleep(i32 time)
   DWORD ms = time;
   Sleep(ms);
 }
+
+u64
+platform_count_files_in_directory(char const* directoryPath)
+{
+  u64 filesCount = 0;
+
+  WIN32_FIND_DATA data;
+  HANDLE find;
+ 
+  find = FindFirstFileA(directoryPath, &data);
+
+  if (find == INVALID_HANDLE_VALUE) {
+    PLPERR("%s: %s [%d]", "Cannot open folder", directoryPath, GetLastError());
+  } else {
+    i32 next = 1;
+
+    while (next != 0) {
+      next = FindNextFile(find, &data);
+      filesCount += 1;
+    }
+  }
+  
+  FindClose(find);
+
+  return filesCount;
+}
+
+char **
+platform_list_directory(char const* directoryPath, u64* size)
+{
+  WIN32_FIND_DATA data;
+  HANDLE find;
+
+  char** files;
+  u64 filesCount = platform_count_files_in_directory(directoryPath);//@todo find better solution ?
+  files = (char**) platform_allocate(sizeof(char*) * (filesCount + 1));
+
+  find = FindFirstFileA(directoryPath, &data);
+
+  if (find == INVALID_HANDLE_VALUE) {
+    PLPERR("%s: %s [%d]", "Cannot open folder", directoryPath, GetLastError());
+  } else {
+    i32 next = 1;
+    u64 index = 0;
+
+    while (next != 0) {
+      data.cFileName[strlen(data.cFileName) - 5] = '\0';//@todo option to remove .json
+      files[index] = (char*)platform_allocate(strlen(data.cFileName));
+      strcpy(files[index], data.cFileName);//@todo filter string security issue ?
+
+      index += 1;
+      next = FindNextFile(find, &data);
+    }
+  }
+
+  *size = filesCount;
+
+  FindClose(find);
+
+  return files;
+}
+
 //LRESULT CALLBACK win32ProcessMessage(HWND hwnd, u32 msg, WPARAM wParam, LPARAM lParam)
 //{
 //  switch (msg) {

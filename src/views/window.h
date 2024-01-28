@@ -7,6 +7,8 @@ struct _PlpWindow {
   GtkWidget* socketStatusLabel;
   GtkWidget* skyboxDropDown;
   GtkStringList* skyboxDropDownModel;
+  GtkWidget* levelDropDown;
+  GtkStringList* levelDropDownModel;
 };
 
 #define PLP_TYPE_WINDOW plp_window_get_type()
