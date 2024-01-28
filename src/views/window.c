@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include "core/logger.h"
+#include "platform/platform.h"
 #include "network/socket.h"
 
 G_DEFINE_FINAL_TYPE(PlpWindow, plp_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -43,9 +44,16 @@ plp_window_init(PlpWindow *win)
   GtkWidget *grid = gtk_grid_new();
   gtk_frame_set_child(GTK_FRAME(frameTopLeft), grid);
 
-  win->btnReloadSkybox = gtk_button_new_with_label("Load bluesky skybox");
-  gtk_widget_set_name(win->btnReloadSkybox, "load_skybox_status_label");
-  gtk_grid_attach(GTK_GRID(grid), win->btnReloadSkybox, 0, 0, 1, 1);
+  GtkWidget* skyboxLabel = gtk_label_new("Skybox");
+  gtk_grid_attach(GTK_GRID(grid), skyboxLabel, 0, 0, 1, 1);
+
+  const char *string[2] = { "", NULL};
+  win->skyboxDropDownModel = gtk_string_list_new((const char* const*) string);
+
+  win->skyboxDropDown = gtk_drop_down_new(G_LIST_MODEL(win->skyboxDropDownModel), NULL);
+  gtk_drop_down_set_selected(GTK_DROP_DOWN(win->skyboxDropDown), GTK_INVALID_LIST_POSITION);
+
+  gtk_grid_attach(GTK_GRID(grid), win->skyboxDropDown, 0, 1, 1, 1);
 
   GtkWidget* frameTopRight = gtk_frame_new(NULL);
   gtk_widget_set_name(frameTopRight, "frameTopRight");

@@ -24,7 +24,7 @@ void socketClose(platformSocket* platformSocket)
 
 }
 
-void socketSend(platformSocket* platformSocket)
+void socketSend(platformSocket* platformSocket, char const * message)
 {
 
 }

@@ -169,20 +169,23 @@ void *getInAddr(struct sockaddr *sa)
 }
 
 void
-socketSend(platformSocket* platformSocket)
+socketSend(platformSocket* platformSocket, char const * message)
 {
+  if (!platformSocket->state) {
+    PLPERR("%s", "Cannot send message socket is not connected");
+    return;
+  }
   struct internalState* state = (struct internalState*)platformSocket->state;
 
-  char* msg = "updateSkybox_bluesky";
-  i32 len = strlen(msg);
+  i32 len = strlen(message);
   i32 bytes = 0;
 
   //@todo check if all bytes has been sent
-  bytes = send(state->socket, msg, len, 0);
+  bytes = send(state->socket, message, len, 0);
   perror("socket sent");
   PLPTRACE("%s:%d", "bytes sent", bytes);
 
-  if (bytes == strlen(msg)) {
+  if (bytes == strlen(message)) {
     bytes = send(state->socket, "\0", 2, 0);
   }
   PLPTRACE("%s:%d", "bytes sent", bytes);

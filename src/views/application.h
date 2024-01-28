@@ -13,5 +13,5 @@ static void plp_application_init(PlpApplication *app);
 static void app_startup(GApplication* application);
 static void app_activate(GApplication* application);
 static void socket_connect(PlpApplication* app);
-static void reload_skybox(GtkButton* btn, gpointer user_data);
+static void reload_skybox(GtkWidget* dropDown, gpointer user_data, PlpApplication* app);
 #pragma clang diagnostic pop
