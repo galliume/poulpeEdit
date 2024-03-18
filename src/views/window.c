@@ -81,9 +81,27 @@ plp_window_init(PlpWindow *win)
   //gtk_widget_set_halign(GTK_WIDGET(image), GTK_ALIGN_FILL);
   //gtk_frame_set_child(GTK_FRAME(frameTopRight), image);
 
+
+  GtkWidget* tabsBottom = gtk_notebook_new();
+  gtk_grid_attach(GTK_GRID(body), tabsBottom, 0, 1, 2, 1);
+
+  GtkWidget* frameTextures = gtk_frame_new(NULL);
+  gtk_widget_set_name(frameTextures, "frameTexture");
+
+  GtkWidget* texturesTabLabel = gtk_label_new("Textures");
+
+  gtk_notebook_insert_page(GTK_NOTEBOOK(tabsBottom), GTK_WIDGET(frameTextures), GTK_WIDGET(texturesTabLabel), 0);
+
+  GtkWidget* frameSound = gtk_frame_new(NULL);
+  gtk_widget_set_name(frameSound, "frameSound");
+
+  GtkWidget* soundTabLabel = gtk_label_new("Sound");
+
+  gtk_notebook_insert_page(GTK_NOTEBOOK(tabsBottom), GTK_WIDGET(frameSound), GTK_WIDGET(soundTabLabel), 1);
+
   GtkWidget* frameBottom = gtk_frame_new(NULL);
   gtk_widget_set_name(frameBottom, "frameBottom");
-  gtk_grid_attach(GTK_GRID(body), frameBottom, 0, 1, 2, 1);
+  gtk_grid_attach(GTK_GRID(body), frameBottom, 0, 2, 2, 1);
 
   GtkWidget *footer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_name(footer, "status_footer");
