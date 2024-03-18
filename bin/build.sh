@@ -6,12 +6,10 @@ configPoulpeEdit=0
 buildPoulpeEdit=0
 
 showusage() {
-    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    echo "~~~~~~ PoulpeEdit ~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    echo "--config           CMake config"
-    echo "--buildPoulpeEdit  Build PoulpeEdit"
-    echo "--help             Show this help"
+    echo "~~~~~~~~~~~~~~ PoulpeEdit ~~~~~~~~~~~~~~~~~~~"
+    echo "-c|--config           CMake config		   "
+    echo "-b|--build            Build PoulpeEdit	   "
+    echo "-h|--help             Show this help		   "
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 }
 
@@ -45,9 +43,9 @@ then
           -DCMAKE_C_COMPILER=clang \
           -DCMAKE_BUILD_TYPE=Debug \
           -DCMAKE_GENERATOR_TOOLSET="ClangCL" \
-		  -DENABLE_CJSON_TEST=OFF \
+          -DENABLE_CJSON_TEST=OFF \
 		  -DENABLE_CUSTOM_COMPILER_FLAGS=OFF \
-		  -DENABLE_CJSON_VERSION_SO=OFF
+	      -DENABLE_CJSON_VERSION_SO=OFF
 		  
 fi
 

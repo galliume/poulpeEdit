@@ -13,7 +13,7 @@ static void plp_application_init(PlpApplication *app);
 static void app_startup(GApplication* application);
 static void app_activate(GApplication* application);
 static void socket_connect(PlpApplication* app);
-static void reload(char const* fn, GtkWidget* dropDown, PlpApplication* app);
 static void reload_skybox(GtkWidget* dropDown, gpointer user_data, PlpApplication* app);
 static void reload_level(GtkWidget* dropDown, gpointer user_data, PlpApplication* app);
+static void send_to_engine(char const* fn, GtkWidget* dropDown, PlpApplication* app);
 #pragma clang diagnostic pop

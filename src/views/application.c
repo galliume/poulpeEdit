@@ -173,17 +173,17 @@ socket_connect(PlpApplication* app)
 static void
 reload_skybox(GtkWidget* dropDown, gpointer user_data, PlpApplication* app)
 {
-  reload("updateSkybox_", dropDown, app);
+  send_to_engine("updateSkybox_", dropDown, app);
 }
 
 static void
 reload_level(GtkWidget* dropDown, gpointer user_data, PlpApplication* app)
 {
-  reload("updateLevel_", dropDown, app);
+  send_to_engine("updateLevel_", dropDown, app);
 }
 
 static void
-reload(char const* fn, GtkWidget* dropDown, PlpApplication* app)
+send_to_engine(char const* fn, GtkWidget* dropDown, PlpApplication* app)
 {
   if (gtk_drop_down_get_selected(GTK_DROP_DOWN(dropDown)) != 0) {
 
